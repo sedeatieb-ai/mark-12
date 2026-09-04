@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة لوحة الشرف والدرجات</title>
+    <style>
+        /* التنسيقات العامة - ستايل فاخر وعصري */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fa; /* خلفية هادئة ومريحة */
+            padding: 20px 15px;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px; /* زوايا دائرية فائقة النعومة */
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+            padding-bottom: 35px;
+        }
+
+        /* الهيدر الاحترافي بتدرج ملكي */
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f8fafc;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-bottom: 4px solid #0d9488; /* خط تيل يضيف لمسة جمالية */
+        }
+
+        /* إخفاء أزرار الراديو بذكاء لمنع أي تعليق */
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+            pointer-events: none;
+        }
+
+        /* تبويبات الصفوف (أزرار علوية مرنة) */
+        .grade-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 25px;
+            background-color: #f1f5f9;
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .grade-tabs label {
+            flex: 1;
+            text-align: center;
+            padding: 14px 10px;
+            background: transparent;
+            color: #475569;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* تفعيل الصف المختار باللون التيل والعمق الملكي */
+        #grade7:checked ~ .grade-tabs label[for="grade7"],
+        #grade8:checked ~ .grade-tabs label[for="grade8"],
+        #grade10:checked ~ .grade-tabs label[for="grade10"],
+        #grade11:checked ~ .grade-tabs label[for="grade11"] {
+            background: #0d9488;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+        }
+
+        /* إخفاء وإظهار المحتوى بسلاسة */
+        .grade-content { display: none; padding: 0 25px; }
+        #grade7:checked ~ #content-g7,
+        #grade8:checked ~ #content-g8,
+        #grade10:checked ~ #content-g10,
+        #grade11:checked ~ #content-g11 { display: block; }
+
+        /* لوحة الشرف الفخمة */
+        .honor-title {
+            text-align: center;
+            color: #1e293b;
+            margin: 35px 0 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .honor-board {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-direction: column;
+
+        }
+
+        .honor-card {
+            flex: 1;
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid #f1f5f9;
+            transition: transform 0.3s ease;
+        }
+        
+        .honor-card:hover {
+            transform: translateY(-5px); /* حركة تفاعلية خفيفة عند تمرير الماوس */
+        }
+        
+        .honor-card h3 { font-size: 1rem; color: #64748b; margin: 10px 0 5px; }
+        .honor-card p { color: #0f172a; font-size: 1.3rem; font-weight: 700; }
+        
+        /* خطوط المراكز الملونة بدقة */
+        .gold { border-top: 5px solid #eab308; background: #fefce8; }
+        
+        .silver { border-top: 5px solid #94a3b8; background: #f8fafc; }
+        .bronze { border-top: 5px solid #ca8a04; background: #fefaf0; }
+        .medal { font-size: 2.5rem; display: block; }
+
+        /* تبويبات الشعب */
+        .section-selection-title {
+            text-align: center;
+            color: #0d9488;
+            font-weight: 700;
+            margin: 35px 0 15px;
+            font-size: 1.2rem;
+        }
+
+        .sec-tabs {
+            display: flex;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            padding: 6px;
+            gap: 8px;
+        }
+
+        .sec-tabs label {
+            flex: 1;
+            text-align: center;
+            padding: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #475569;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+        }
+
+        /* تفعيل تبويب الشعبة بالأزرق الغامق الاحترافي */
+        #g7-s1:checked ~ .sec-tabs label[for="g7-s1"], #g7-s2:checked ~ .sec-tabs label[for="g7-s2"], #g7-s3:checked ~ .sec-tabs label[for="g7-s3"],
+        #g8-s1:checked ~ .sec-tabs label[for="g8-s1"], #g8-s2:checked ~ .sec-tabs label[for="g8-s2"], #g8-s3:checked ~ .sec-tabs label[for="g8-s3"],
+        #g10-s1:checked ~ .sec-tabs label[for="g10-s1"], #g10-s2:checked ~ .sec-tabs label[for="g10-s2"], #g10-s3:checked ~ .sec-tabs label[for="g10-s3"],
+        #g11-s1:checked ~ .sec-tabs label[for="g11-s1"], #g11-s2:checked ~ .sec-tabs label[for="g11-s2"], #g11-s3:checked ~ .sec-tabs label[for="g11-s3"] {
+            background: #1e293b;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+        }
+
+        /* حاوية كروت الطالبات (مرونة كاملة للمعاينة والموبايل) */
+        .sec-content { 
+            display: none; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: center; 
+        }
+
+        #g7-s1:checked ~ #content-g7-s1, #g7-s2:checked ~ #content-g7-s2, #g7-s3:checked ~ #content-g7-s3,
+        #g8-s1:checked ~ #content-g8-s1, #g8-s2:checked ~ #content-g8-s2, #g8-s3:checked ~ #content-g8-s3,
+        #g10-s1:checked ~ #content-g10-s1, #g10-s2:checked ~ #content-g10-s2, #g10-s3:checked ~ #content-g10-s3,
+        #g11-s1:checked ~ #content-g11-s1, #g11-s2:checked ~ #content-g11-s2, #g11-s3:checked ~ #content-g11-s3 {
+            display: flex;
+        }
+
+        /* كروت درجات الطالبات - واضحة ومقروءة بشكل ضخم */
+        .student-card {
+            background: #ffffff;
+            flex: 1 1 290px;
+            max-width: 100%;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            position: relative;
+            border: 1px solid #f1f5f9;
+        }
+
+        .student-card .badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #ccfbf1;
+            color: #0d9488;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        .student-card h4 { 
+            text-align: center; 
+            margin-bottom: 22px; 
+            color: #0f172a; 
+            font-size: 1.4rem; 
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .student-card ul { 
+            list-style: none; 
+            color: #334155; 
+            font-size: 1.2rem; /* تكبير كلي للخطوط لجعلها مريحة جداً */
+            padding: 0 5px;
+        }
+
+        .student-card ul li { 
+            margin-bottom: 14px; 
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .student-card ul li span {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* إبراز خانة المجموع الكلي بصورة مذهلة */
+        .student-card .total { 
+            border-top: 2px dashed #e2e8f0; 
+            margin-top: 20px; 
+            padding-top: 16px; 
+            text-align: center;
+font-weight: 700; 
+            font-size: 1.4rem; 
+            color: #0d9488;
+        }
+
+        /* الفوتر (حقوق التطوير الخاصة بكِ) */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #94a3b8;
+            font-size: 1rem;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 25px;
+        }
+        footer span {
+            color: #0d9488;
+            font-weight: 700;
+        }
+        
+        .note-text{
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: right;
+            direction: rtl;
+            margin-top: 15px ;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            🎓 سجل الدرجات  🎓
+        </header>
+
+        <!-- التحكم الرئيسي بالصفوف -->
+        <input type="radio" name="main-grade" id="grade7">
+        <input type="radio" name="main-grade" id="grade8">
+        <input type="radio" name="main-grade" id="grade10" checked>
+        <input type="radio" name="main-grade" id="grade11">
+
+        <div class="grade-tabs">
+            <label for="grade7">السابع</label>
+            <label for="grade8">الثامن</label>
+            <label for="grade10">العاشر</label>
+            <label for="grade11">الحادي عشر</label>
+        </div>
+
+        <!-- ======================= الصف السابع ======================= -->
+        <div class="grade-content" id="content-g7">
+            <h2 class="honor-title">🌟 متميزات صف السابع 🌟</h2>
+            <div class="honor-board">
+                <div class="honor-card bronze"><span class="medal">🥉</span><h3>المرتبة الثالثة</h3><p>فاطمه غنيمه  -  ماسه ياسين -  شام علوش  - هبه شنور  - ريماس الشندري </p></div>
+                <div class="honor-card gold"><span class="medal">🥇</span><h3>المرتبة الأولى</h3><p>  فاطمه عمار  - ليلى الحموي  -  نور الشام -  شام الخزاعي </p></div>
+                <div class="honor-card silver"><span class="medal">🥈</span><h3>المرتبة الثانية</h3><p>اسراء شوربه - ايلاف خرما - براءه الخطيب  - ملاك قبلان  - ريتال الاديب  </p></div>
+            </div>
+
+            <p class="section-selection-title">اختر الشعبة لعرض النتائج (السابع)</p>
+            <input type="radio" name="sec-g7" id="g7-s1" checked>
+            <input type="radio" name="sec-g7" id="g7-s2">
+            <input type="radio" name="sec-g7" id="g7-s3">
+
+            <div class="sec-tabs">
+                <label for="g7-s1">شعبة أولى</label>
+                <label for="g7-s2">شعبة ثانية</label>
+                <label for="g7-s3">شعبة ثالثة</label>
+            </div>
+
+
+
+
+
+            <div class="sec-content" id="content-g7-s1">
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>اسراء الحسين</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>40</span></li></ul><div class="total" >المجموع : 60</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>اسينات الصلوع</h4><ul><li>مذاكرة: <span>40</span></li><li>فحص: <span>100</span></li></ul><div class="total">المجموع : 140</div></div>
+                  <div class="student-card"><span class="badge">شعبة 1</span><h4>بانا فليطاني</h4><ul><li>مذاكرة: <span>10</span></li><li>فحص: <span>50</span></li></ul><div class="total" >المجموع : 60</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>اليمار الطبجي</h4><ul><li>مذاكرة: <span>98</span></li><li>فحص: <span>170</span></li></ul><div class="total">المجموع : 268</div></div>
+             <div class="student-card"><span class="badge">شعبة 1</span><h4>الين الجودي</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>50</span></li></ul><div class="total" >المجموع : 80</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>ايه كلكوش</h4><ul><li>مذاكرة: <span>98</span></li><li>فحص: <span>100</span></li></ul><div class="total">المجموع : 198</div></div>
+             <div class="student-card"><span class="badge">شعبة 1</span><h4>جنا الرحمان</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>170</span></li></ul><div class="total" >المجموع : 260</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>رنا يحيى</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع : 80</div></div>
+             <div class="student-card"><span class="badge">شعبة 1</span><h4>ريتال خزاعي</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>185</span></li></ul><div class="total" >المجموع : 280</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>سجى حليمه</h4><ul><li>مذاكرة: <span>50</span></li><li>فحص: <span>35</span></li></ul><div class="total">المجموع : 85</div></div>
+             <div class="student-card"><span class="badge">شعبة 1</span><h4>شام الحصيني</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>60</span></li></ul><div class="total" >المجموع : 155</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>شام ريا</h4><ul><li>مذاكرة: <span>40</span></li><li>فحص: <span>30</span></li></ul><div class="total">المجموع : 70</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>شكرية بشلح</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>180</span></li></ul><div class="total" >المجموع : 270</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>شهد رضيه</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>60</span></li></ul><div class="total">المجموع : 90</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>شهد عبد السلام</h4><ul><li>مذاكرة: <span>40</span></li><li>فحص: <span>185</span></li></ul><div class="total" >المجموع : 225</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>صفى علوش</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>140</span></li></ul><div class="total">المجموع : 230</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>غفران العينيه</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>10</span></li></ul><div class="total" >المجموع : 30</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>فاطمه عمار</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع : 300</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>فاطمه غنيمه</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>190</span></li></ul><div class="total" >المجموع : 290</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>لانا النجار</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>50</span></li></ul><div class="total">المجموع : 80</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>لانا مراد</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>180</span></li></ul><div class="total" >المجموع : 270</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>لليان الشاقي</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>135</span></li></ul><div class="total">المجموع : -</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>ليان مسكه</h4><ul><li>مذاكرة: <span>50</span></li><li>فحص: <span>170</span></li></ul><div class="total" >المجموع : 220</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>ماسا الكسار</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع : 40</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>ماسا مستو</h4><ul><li>مذاكرة: <span>92</span></li><li>فحص: <span>150</span></li></ul><div class="total" >المجموع : 242</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>ماسه ياسين</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>195</span></li></ul><div class="total">المجموع : 290</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>مايا الابرص</h4><ul><li>مذاكرة: <span>98</span></li><li>فحص: <span>190</span></li></ul><div class="total" >المجموع : 288</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>مايا رزق</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع : 270</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>مريم شنور</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>170</span></li></ul><div class="total" >المجموع : 260</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>ملاك حصوه</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع : 180</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>ملاك رزق</h4><ul><li>مذاكرة: <span>10</span></li><li>فحص: <span>90</span></li></ul><div class="total" >المجموع : 100</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>نتالي الخليل</h4><ul><li>مذاكرة: <span>0</span></li><li>فحص: <span>2</span></li></ul><div class="total">المجموع : 2</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>نجوى خوير</h4><ul><li>مذاكرة: <span>5</span></li><li>فحص: <span>2</span></li></ul><div class="total" >المجموع : 7</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>نوران الجزار</h4><ul><li>مذاكرة: <span>98</span></li><li>فحص: <span>140</span></li></ul><div class="total">المجموع : 238</div></div>
+            <div class="student-card"><span class="badge">شعبة 1</span><h4>ياسمين الابرص</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>190</span></li></ul><div class="total" >المجموع : 260</div></div>
+             
+
+
+
+
+
+
+            
+            </div>
+            <div class="sec-content" id="content-g7-s2">
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>اسراء شوربه</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>195</span></li></ul><div class="total">المجموع: 295</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>الروح طالب</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع: 180</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>ايلاف خرما</h4><ul><li>مذاكرة: <span>97</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 297</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>براءه الخطيبب</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 295</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>جنان الباشا</h4><ul><li>مذاكرة: <span>10</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 195</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>جنى الاديب</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: 40</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>جنى بطحيش</h4><ul><li>مذاكرة: <span>25</span></li><li>فحص: <span>80</span></li></ul><div class="total">المجموع: 105</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>جنى درويش</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: 40</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>جودي الجباره</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع: 280</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>رفيف العرسالي</h4><ul><li>مذاكرة: <span>0</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: 20</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>رقيه كشنو</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 275</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ريتا العبد</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع: 275</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>ريم ملحم</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>140</span></li></ul><div class="total">المجموع: 235</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ساره كلكوش</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع: 240</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>سيرين سوكاني</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>165</span></li></ul><div class="total">المجموع: 225</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>شام الحوز</h4><ul><li>مذاكرة: <span>80</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع: 230</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>شام الطحان</h4><ul><li>مذاكرة: <span>50</span></li><li>فحص: <span>60</span></li></ul><div class="total">المجموع: 110</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>شام النمر</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>120</span></li></ul><div class="total">المجموع: 215</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>شام علوش</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 290</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>غازيه مطلق</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>10</span></li></ul><div class="total">المجموع: 110</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>فرح الاديب</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>140</span></li></ul><div class="total">المجموع: 230</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ليان طربوش</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع: 240</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>ليلاس رزق</h4><ul><li>مذاكرة: <span>92</span></li><li>فحص: <span>175</span></li></ul><div class="total">المجموع: 267</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ليلى الحموي</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 300</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>لين الصدقه</h4><ul><li>مذاكرة: <span>92</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 277</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>لين النجم</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>130</span></li></ul><div class="total">المجموع: 225</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>مرام الشالح</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع: 110</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>مرام العرسالي</h4><ul><li>مذاكرة: <span>0</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: 20</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>ملاك الشقه</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 280</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ملاك قبلان</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 295</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>مها غليون</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>175</span></li></ul><div class="total">المجموع: 235</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ميساء عرسالي</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>175</span></li></ul><div class="total">المجموع: 235</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>نور الشام البدوي</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 300</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>هبه شنور</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>190</span></li></ul><div class="total">المجموع: 290</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>هيفاء شوربه</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>125</span></li></ul><div class="total">المجموع: 215</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>يارا الحصيني</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>130</span></li></ul><div class="total">المجموع: 160</div></div>
+         <div class="student-card"><span class="badge">شعبة 2</span><h4>ياقوت ابو ضاهر</h4><ul><li>مذاكرة: <span>80</span></li><li>فحص: <span>70</span></li></ul><div class="total">المجموع: 150</div></div>
+             
+            </div>
+            <div class="sec-content" id="content-g7-s3">
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>اسنات البويضاني</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>95</span></li></ul><div class="total">المجموع: 155</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>اليمار عثمان</h4><ul><li>مذاكرة: <span>85</span></li><li>فحص: <span>120</span></li></ul><div class="total">المجموع: 205</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>بيسان القاسم</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>50</span></li></ul><div class="total">المجموع: 70</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>جنى ابو ليلى</h4><ul><li>مذاكرة: <span>80</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 265</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>جوري الاقرع</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>160</span></li></ul><div class="total">المجموع: 255</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>جوري عطايا</h4><ul><li>مذاكرة: <span>90</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 275</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>حياة نقشة</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>60</span></li></ul><div class="total">المجموع: 80</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>راما خزاعي</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>175</span></li></ul><div class="total">المجموع: 270</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>رنيم مومنه</h4><ul><li>مذاكرة: <span>80</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 280</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>روان عبد الرجمن</h4><ul><li>مذاكرة: <span>10</span></li><li>فحص: <span>40</span></li></ul><div class="total">المجموع: 50</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>ريتاج الحاج علي</h4><ul><li>مذاكرة: <span>50</span></li><li>فحص: <span>50</span></li></ul><div class="total">المجموع: 100</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>ريتال الاديب</h4><ul><li>مذاكرة: <span>99</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 299</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>ريماس الشندري</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>195</span></li></ul><div class="total">المجموع: 290</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>سلام الدرنب</h4><ul><li>مذاكرة: <span>85</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: -</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>سيدرة حمزه</h4><ul><li>مذاكرة: <span>80</span></li><li>فحص: <span>20</span></li></ul><div class="total">المجموع: 100</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>شام العبد</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>150</span></li></ul><div class="total">المجموع: 245</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>شام خزاعي</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>200</span></li></ul><div class="total">المجموع: 300</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>عغراء كنعان</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>60</span></li></ul><div class="total">المجموع: 90</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>غفران دياب</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>160</span></li></ul><div class="total">المجموع: 230</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>فتحيه قصبه</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>70</span></li></ul><div class="total">المجموع: 90</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>ليان الحكيم</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>190</span></li></ul><div class="total">المجموع: 260</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>مايا البرادعي</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع: 250</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>مايا فخر الدين</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>40</span></li></ul><div class="total">المجموع: 70</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>مريم العباسي</h4><ul><li>مذاكرة: <span>60</span></li><li>فحص: <span>120</span></li></ul><div class="total">المجموع: 180</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>ملاك الدويش</h4><ul><li>مذاكرة: <span>100</span></li><li>فحص: <span>180</span></li></ul><div class="total">المجموع: 280</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>منار محمود</h4><ul><li>مذاكرة: <span>95</span></li><li>فحص: <span>185</span></li></ul><div class="total">المجموع: 280</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>نور الغانم</h4><ul><li>مذاكرة: <span>20</span></li><li>فحص: <span>100</span></li></ul><div class="total">المجموع: 120</div></div>
+              <div class="student-card"><span class="badge">شعبة 3</span><h4>نور الهدى الشيخ</h4><ul><li>مذاكرة: <span>70</span></li><li>فحص: <span>170</span></li></ul><div class="total">المجموع: 240</div></div>
+               
+            </div>
+        </div>
+
+
+
+
+
+        <!-- ======================= الصف الثامن ======================= -->
+        <div class="grade-content" id="content-g8">
+            <h2 class="honor-title">🌟  متميزات الصف الثامن 🌟</h2>
+            <div class="honor-board">
+                <div class="honor-card bronze"><span class="medal">🥉</span><h3>المرتبة الثالثة</h3><p>نور</p></div>
+<div class="honor-card gold"><span class="medal">🥇</span><h3>المرتبة الأولى</h3><p>شهد</p></div>
+                <div class="honor-card silver"><span class="medal">🥈</span><h3>المرتبة الثانية</h3><p>رزان</p></div>
+            </div>
+
+            <p class="section-selection-title">اختر الشعبة لعرض النتائج (الثامن)</p>
+            <input type="radio" name="sec-g8" id="g8-s1" checked>
+            <input type="radio" name="sec-g8" id="g8-s2">
+            <input type="radio" name="sec-g8" id="g8-s3">
+
+            <div class="sec-tabs">
+                <label for="g8-s1">شعبة أولى</label>
+                <label for="g8-s2">شعبة ثانية</label>
+                <label for="g8-s3">شعبة ثالثة</label>
+            </div>
+
+            <div class="sec-content" id="content-g8-s1">
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>دانا</h4><ul><li>مذاكرة: <span>26</span></li><li>فحص: <span>50</span></li></ul><div class="total">المجموع: 76</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>ليلى</h4><ul><li>مذاكرة: <span>29</span></li><li>فحص: <span>57</span></li></ul><div class="total">المجموع: 86</div></div>
+            </div>
+            <div class="sec-content" id="content-g8-s2">
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>ماسة</h4><ul><li>مذاكرة: <span>24</span></li><li>فحص: <span>48</span></li></ul><div class="total">المجموع: 72</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>جنى</h4><ul><li>مذاكرة: <span>28</span></li><li>فحص: <span>55</span></li></ul><div class="total">المجموع: 83</div></div>
+            </div>
+            <div class="sec-content" id="content-g8-s3">
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>سمر</h4><ul><li>مذاكرة: <span>21</span></li><li>فحص: <span>40</span></li></ul><div class="total">المجموع: 61</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>ريم</h4><ul><li>مذاكرة: <span>27</span></li><li>فحص: <span>52</span></li></ul><div class="total">المجموع: 79</div></div>
+            </div>
+        </div>
+
+        <!-- ======================= الصف العاشر ======================= -->
+        <div class="grade-content" id="content-g10">
+            <h2 class="honor-title">🌟  متميزات الصف العاشر 🌟</h2>
+            <div class="honor-board">
+                <div class="honor-card bronze"><span class="medal">🥉</span><h3>المرتبة الثالثة</h3><p>يارا</p></div>
+                <div class="honor-card gold"><span class="medal">🥇</span><h3>المرتبة الأولى</h3><p>ديمة</p></div>
+                <div class="honor-card silver"><span class="medal">🥈</span><h3>المرتبة الثانية</h3><p>تالا</p></div>
+            </div>
+
+            <p class="section-selection-title">اختر الشعبة لعرض النتائج (العاشر)</p>
+            <input type="radio" name="sec-g10" id="g10-s1" checked>
+            <input type="radio" name="sec-g10" id="g10-s2">
+            <input type="radio" name="sec-g10" id="g10-s3">
+
+            <div class="sec-tabs">
+                <label for="g10-s1">شعبة أولى</label>
+                <label for="g10-s2">شعبة ثانية</label>
+                <label for="g10-s3">شعبة ثالثة</label>
+            </div>
+
+            <div class="sec-content" id="content-g10-s1">
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>بيسان</h4><ul><li>مذاكرة: <span>24</span></li><li>فحص: <span>51</span></li></ul><div class="total">المجموع: 75</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>رغد</h4><ul><li>مذاكرة: <span>25</span></li><li>فحص: <span>50</span></li></ul><div class="total">المجموع: 75</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>شام</h4><ul><li>مذاكرة: <span>28</span></li><li>فحص: <span>55</span></li></ul><div class="total">المجموع: 83</div></div>
+            </div>
+            <div class="sec-content" id="content-g10-s2">
+<div class="student-card"><span class="badge">شعبة 2</span><h4>زينة</h4><ul><li>مذاكرة: <span>22</span></li><li>فحص: <span>48</span></li></ul><div class="total">المجموع: 70</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>جمانة</h4><ul><li>مذاكرة: <span>29</span></li><li>فحص: <span>58</span></li></ul><div class="total">المجموع: 87</div></div>
+            </div>
+            <div class="sec-content" id="content-g10-s3">
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>جودي</h4><ul><li>مذاكرة: <span>27</span></li><li>فحص: <span>54</span></li></ul><div class="total">المجموع: 81</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>تالين</h4><ul><li>مذاكرة: <span>25</span></li><li>فحص: <span>52</span></li></ul><div class="total">المجموع: 77</div></div>
+            </div>
+        </div>
+
+        <!-- ======================= الصف الحادي عشر ======================= -->
+        <div class="grade-content" id="content-g11">
+            <h2 class="honor-title">🌟 متميزات  الحادي عشر 🌟</h2>
+            <div class="honor-board">
+                <div class="honor-card bronze"><span class="medal">🥉</span><h3>المرتبة الثالثة</h3><p>نادين</p></div>
+                <div class="honor-card gold"><span class="medal">🥇</span><h3>المرتبة الأولى</h3><p>هبة</p></div>
+                <div class="honor-card silver"><span class="medal">🥈</span><h3>المرتبة الثانية</h3><p>غالية</p></div>
+            </div>
+
+            <p class="section-selection-title">اختر الشعبة لعرض النتائج (الحادي عشر)</p>
+            <input type="radio" name="sec-g11" id="g11-s1" checked>
+            <input type="radio" name="sec-g11" id="g11-s2">
+            <input type="radio" name="sec-g11" id="g11-s3">
+
+            <div class="sec-tabs">
+                <label for="g11-s1">شعبة أولى</label>
+                <label for="g11-s2">شعبة ثانية</label>
+                <label for="g11-s3">شعبة ثالثة</label>
+            </div>
+
+            <div class="sec-content" id="content-g11-s1">
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>لين</h4><ul><li>مذاكرة: <span>29</span></li><li>فحص: <span>59</span></li></ul><div class="total">المجموع: 88</div></div>
+                <div class="student-card"><span class="badge">شعبة 1</span><h4>رشا</h4><ul><li>مذاكرة: <span>27</span></li><li>فحص: <span>54</span></li></ul><div class="total">المجموع: 81</div></div>
+            </div>
+            <div class="sec-content" id="content-g11-s2">
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>مرح</h4><ul><li>مذاكرة: <span>26</span></li><li>فحص: <span>51</span></li></ul><div class="total">المجموع: 77</div></div>
+                <div class="student-card"><span class="badge">شعبة 2</span><h4>سديم</h4><ul><li>مذاكرة: <span>30</span></li><li>فحص: <span>60</span></li></ul><div class="total">المجموع: 90</div></div>
+            </div>
+            <div class="sec-content" id="content-g11-s3">
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>حنين</h4><ul><li>مذاكرة: <span>24</span></li><li>فحص: <span>49</span></li></ul><div class="total">المجموع: 73</div></div>
+                <div class="student-card"><span class="badge">شعبة 3</span><h4>صبا</h4><ul><li>مذاكرة: <span>28</span></li><li>فحص: <span>56</span></li></ul><div class="total">المجموع: 84</div></div>
+            </div>
+        </div>
+
+        <footer>
+             <span> Dev by : Sedra Tieb || Under guidance of Eng.nazeer baset</span>
+        </footer> 
+<p class="note-text">ملاحظه: علامة المجموع ليست علامه المحصله وانما جمع علامة المذاكره والفحص</br>
+    </div>
+
+</body>
+</html>
